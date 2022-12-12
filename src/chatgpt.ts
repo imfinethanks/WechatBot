@@ -36,6 +36,7 @@ enum MessageType {
 }
 
 const SINGLE_MESSAGE_MAX_SIZE = 500;
+const blacklist: Array<string> = ["史"];
 const ErrorCode2Message: Record<string, string> = {
   "503":
     "OpenAI 服务器繁忙，请稍后再试| The OpenAI server is busy, please try again later",
@@ -292,6 +293,7 @@ export class ChatGPTBot {
   ): Promise<void> {
     const messages: Array<string> = [];
     let message = mesasge;
+    message=`[ChatGPT自动回复] ${message}`;
     while (message.length > SINGLE_MESSAGE_MAX_SIZE) {
       messages.push(message.slice(0, SINGLE_MESSAGE_MAX_SIZE));
       message = message.slice(SINGLE_MESSAGE_MAX_SIZE);
@@ -327,6 +329,7 @@ export class ChatGPTBot {
       talker.self() ||
       messageType > MessageType.GroupNote ||
       talker.name() == "微信团队" ||
+      blacklist.includes(talker.name())||
       // 语音(视频)消息
       text.includes("收到一条视频/语音聊天消息，请在手机上查看") ||
       // 红包消息
